@@ -117,7 +117,7 @@ int Network::initialize(XXXXXConfig  config){
 
 
 void Network::setRxHandler(void (*callbackPtr)(NWResponse* data, int* returnCode)){
-                      ;
+    _rxCallbackPtr = callbackPtr;
 }
 void Network::send(uint8_t* xmitData, uint8_t dataLen, SendReqType type)
 {

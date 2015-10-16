@@ -185,6 +185,7 @@ public:
     int  initialize(XXXXXConfig  config);
 
 private:
+    void (*_rxCallbackPtr)(NWResponse* data, int* returnCode);
 
 };
 
