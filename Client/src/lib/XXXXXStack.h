@@ -173,11 +173,11 @@ public:
     ~Network();
 
 
-    void send(uint8_t* xmitData, uint8_t dataLen, SendReqType type){}//todo;
-    int  readPacket(uint8_t type = 0){return-1;};//todo
-    void setGwAddress(){};//todo
-    void resetGwAddress(void){};//todo
-    void setRxHandler(void (*callbackPtr)(NWResponse* data, int* returnCode)){};//todo
+    void send(uint8_t* xmitData, uint8_t dataLen, SendReqType type);//todo;
+    int  readPacket(uint8_t type = 0);//todo
+    void setGwAddress();//todo
+    void resetGwAddress(void);//todo
+    void setRxHandler(void (*callbackPtr)(NWResponse* data, int* returnCode));//todo
 
     void unicast(NWAddress64* addr64, uint16_t addr16,	uint8_t* payload, uint16_t payloadLength);
 	void broadcast(uint8_t* payload, uint16_t payloadLength);

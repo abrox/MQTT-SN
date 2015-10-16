@@ -115,6 +115,24 @@ int Network::initialize(XXXXXConfig  config){
 }
 
 
+
+void Network::setRxHandler(void (*callbackPtr)(NWResponse* data, int* returnCode)){
+                      ;
+}
+void Network::send(uint8_t* xmitData, uint8_t dataLen, SendReqType type)
+{
+
+}//todo;
+int  Network::readPacket(uint8_t type){
+    return-1;
+}//todo
+void Network::setGwAddress(){
+    //todo: Jahka ymmärtää miten verkkoa osoitetaan nrlf2401 verkossa..
+
+}
+void Network::resetGwAddress(void){
+//todo: Jahka ymmärtää miten verkkoa osoitetaan nrlf2401 verkossa..
+}
 /*=========================================
        Class XXXXXPort
  =========================================*/
