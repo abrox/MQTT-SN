@@ -23,8 +23,8 @@ CPPFLAGS +=
 DEFS :=
 LDFLAGS += 
 LIBS +=
-#LDADD := -lpthread -lrt -lssl -lcrypto
-LDADD := -lpthread -lrt -lwiringPi -lssl -lcrypto
+LDADD := -lpthread -lrt -lssl -lcrypto
+#LDADD := -lpthread -lrt -lwiringPi -lssl -lcrypto
 
 CXXFLAGS := -Wall -O3
 

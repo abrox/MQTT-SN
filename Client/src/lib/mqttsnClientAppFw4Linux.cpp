@@ -62,8 +62,22 @@ XBeeAppConfig  theAppConfig = { { 0, 0, 0 },{ 0, 0, false, false, 0, 0 } };
 #ifdef NETWORK_UDP
 UdpAppConfig   theAppConfig = {{ {0,0,0,0}, 0, {0,0,0,0}, 0, {0,0,0,0,0,0} },{ 0, 0, false, false, 0, 0 } };
 #endif
+#ifdef NETWORK_XXXXX
+XXXXXAppConfig theAppConfig = {
+  {
+    1,3,3
 
-
+  },
+    {
+        "ARD02",       //ClientId
+        300,            //KeepAlive
+        true,           //Clean session
+        false,           //EndDevice
+        "willTopic",    //WillTopic   or 0   DO NOT USE NULL STRING "" !
+        "willMessage"   //WillMessage or 0   DO NOT USE NULL STRING "" !
+    }
+};
+#endif
 /*========================================
 		main function
 =========================================*/
@@ -126,6 +140,9 @@ void MqttsnClientApplication::initialize(int argc, char** argv){
 #endif
 
 	while((arg = getopt(argc, argv, "hcb:d:u:i:k:t:m:g:p:"))!= -1){
+        printf("Arg:%c\n",arg);
+        if(optarg)
+            printf("Arg:%s\n",(const char*)optarg);
 		switch(arg){
 		case 'h':
 			printf("Usage:  -b: [baudrate]      (XBee)\n");
@@ -207,9 +224,9 @@ void MqttsnClientApplication::initialize(int argc, char** argv){
 #ifdef NETWORK_XBEE
     if(br && dev){
         theAppConfig.netCfg.baudrate = br;
-　       theAppConfig.netCfg.device = strdup(dev);
+        theAppConfig.netCfg.device = strdup(dev);
     }else{
-        printf("argument error\n");
+        printf("Daa argument error\n");
         exit(1);
     }
 #endif
@@ -224,7 +241,7 @@ void MqttsnClientApplication::initialize(int argc, char** argv){
 		theAppConfig.netCfg.ipAddress[2] = (ipaddr & 0x0000ff00) >> 8;
 		theAppConfig.netCfg.ipAddress[3] = (ipaddr & 0x000000ff);
 	}else{
-		printf("argument error\n");
+        printf("This argument error\n");
 		exit(1);
 	}
 #endif

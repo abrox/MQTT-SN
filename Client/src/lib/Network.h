@@ -71,6 +71,13 @@ enum SendReqType{
 #endif
 
 
+#ifdef NETWORK_XXXXX
+    #ifdef ARDUINO
+        #include <XXXXXStack.h>
+    #else
+        #include "XXXXXStack.h"
+    #endif
+#endif
 namespace tomyClient {
 /***********************************
  *     MQTT-SN  Client's state

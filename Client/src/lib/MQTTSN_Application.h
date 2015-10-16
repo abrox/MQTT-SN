@@ -39,7 +39,9 @@
 /****************************************
       Select Platform and Network
 *****************************************/
-
+//#ifndef ARDUINO
+//   #define ARDUINO
+//#endif
 /*----------- Select Platform  ---------*/
 #ifndef ARDUINO
 	#define LINUX
@@ -52,9 +54,9 @@
 
 
 /*-------- Select Network  -------------*/
-#define NETWORK_XBEE
+//#define NETWORK_XBEE
 //#define NETWORK_UDP
-
+#define NETWORK_XXXXX
 
 /*--- XBee Buffer Flow Control --*/
 #ifdef NETWORK_XBEE
@@ -66,7 +68,7 @@
  ======================================*/
 //#define NW_DEBUG
 //#define MQTTSN_DEBUG
-#define DEBUG
+//#define DEBUG
 
 
 /****************************************
@@ -77,10 +79,12 @@
 #else
 	#ifdef NETWORK_XBEE
 		#define MQTTSN_MAX_FRAME_SIZE           70
-	#else
-		#ifdef NETWORK_UDP
-			#define MQTTSN_MAX_FRAME_SIZE     1024
-		#endif
+    #endif
+    #ifdef NETWORK_XXXXX
+        #define MQTTSN_MAX_FRAME_SIZE               70
+    #endif
+    #ifdef NETWORK_UDP
+        #define MQTTSN_MAX_FRAME_SIZE     1024
 	#endif
 #endif
 /****************************************
@@ -136,6 +140,17 @@ typedef struct {
 	MqttsnConfig mqttsnCfg;
 }UdpAppConfig;
 
+typedef struct {
+    uint8_t  param1;
+    uint16_t param2;
+    uint16_t param3;
+}XXXXXConfig;
+
+typedef struct {
+    XXXXXConfig netCfg;
+    MqttsnConfig mqttsnCfg;
+}XXXXXAppConfig;
+
 /*======================================
       MACROs for Application
 =======================================*/
@@ -149,6 +164,12 @@ typedef struct {
     #define UDP_APP_CONFIG        UdpAppConfig   theAppConfig
 	#define APP_CONFIG            UdpAppConfig
 	#define NETWORK_CONFIG        UdpConfig
+#endif
+
+#ifdef NETWORK_XXXXX
+    #define XXXXX_APP_CONFIG      XXXXXAppConfig   theAppConfig
+    #define APP_CONFIG            XXXXXAppConfig
+    #define NETWORK_CONFIG        XXXXXConfig
 #endif
 
 #define TASK_LIST         TaskList theTaskList[]
