@@ -91,7 +91,7 @@ extern void setUint32(uint8_t* pos, uint32_t val);
 /*=========================================
        Class Network
  =========================================*/
-Network::Network(){
+Network::Network():_rxCallbackPtr(0),_returnCode(0){
 }
 
 Network::~Network(){
@@ -121,10 +121,15 @@ void Network::setRxHandler(void (*callbackPtr)(NWResponse* data, int* returnCode
 }
 void Network::send(uint8_t* xmitData, uint8_t dataLen, SendReqType type)
 {
-
+   printf("MsgOut(Type%d,len%d):",type,dataLen);
+   for(int i=0;i<dataLen;i++)
+       printf("%0.2X ",xmitData[i]);
+   printf("\n");
 }//todo;
 int  Network::readPacket(uint8_t type){
-    return-1;
+    _returnCode = 0;
+     printf("Wait something from the net...type %X\n",type);
+    return _returnCode;
 }//todo
 void Network::setGwAddress(){
     //todo: Jahka ymmärtää miten verkkoa osoitetaan nrlf2401 verkossa..
