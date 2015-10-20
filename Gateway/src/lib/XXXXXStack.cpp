@@ -108,7 +108,7 @@ int XXXXXPort::initialize(){
 	return initialize(_config);
 }
 
-int XXXXXPort::initialize(UdpConfig config){
+int XXXXXPort::initialize(XXXXXConfig config){
 
 	_config.param1 = config.param1;
 	_config.param2 = config.param2;
