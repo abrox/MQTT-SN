@@ -56,7 +56,7 @@
 /*-------- Select Network  -------------*/
 //#define NETWORK_XBEE
 //#define NETWORK_UDP
-#define NETWORK_XXXXX
+//#define NETWORK_XXXXX
 
 /*--- XBee Buffer Flow Control --*/
 #ifdef NETWORK_XBEE
