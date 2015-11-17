@@ -1,0 +1,15 @@
+build-Client-Desktop-Debug/
+build-Gateway-Desktop-Debug/
+Client/html/
+*.pro
+*.user
+LogMonitor/Build/
+
+Mqtt-sn.config
+Mqtt-sn.creator
+Mqtt-sn.files
+Mqtt-sn.includes
+*.autosave
+*~
+
+
