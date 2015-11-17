@@ -89,15 +89,15 @@ class NWResponse {
 public:
 	NWResponse();
 	uint8_t  getMsgType();
-	uint8_t  getFrameLength();
-	uint8_t  getPayload(uint8_t index);
 	uint8_t* getPayloadPtr();
-	uint8_t* getBody();
 	uint16_t getBodyLength();
 	uint8_t  getPayloadLength();
 	uint16_t getClientAddress16();
 	NWAddress64* getClientAddress64();
-
+protected:
+    uint8_t* getBody();
+    uint8_t  getPayload(uint8_t index);
+    uint8_t  getFrameLength();
 	void setLength(uint16_t len);
   	void setMsgType(uint8_t type);
 	void setClientAddress64(uint32_t msb, uint32_t ipAddress);
@@ -118,7 +118,7 @@ class XXXXXPort{
 public:
 	XXXXXPort();
 	virtual ~XXXXXPort();
-
+protected:
 	int initialize(XXXXXConfig config);
     int initialize();
 
