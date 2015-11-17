@@ -90,11 +90,11 @@ public:
 	NWResponse();
 	uint8_t  getMsgType();
 	uint8_t* getPayloadPtr();
-	uint16_t getBodyLength();
 	uint8_t  getPayloadLength();
 	uint16_t getClientAddress16();
 	NWAddress64* getClientAddress64();
 protected:
+    uint16_t getBodyLength();
     uint8_t* getBody();
     uint8_t  getPayload(uint8_t index);
     uint8_t  getFrameLength();
