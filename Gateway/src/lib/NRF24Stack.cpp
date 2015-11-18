@@ -35,7 +35,7 @@
 
 #include "Defines.h"
 
-#ifdef NETWORK_XXXXX
+#ifdef NETWORK_NRF24
 
 #include <stdio.h>
 #include <sys/time.h>
@@ -71,62 +71,59 @@ Network::~Network(){
 }
 
 void Network::unicast(NWAddress64* addr64, uint16_t addr16, uint8_t* payload, uint16_t payloadLength){
-    XXXXXPort::unicast( );
+    Nrf24Port::unicast( );
 }
 
 void Network::broadcast(uint8_t* payload, uint16_t payloadLength){
-    XXXXXPort::multicast( );
+    Nrf24Port::multicast( );
 }
 
 bool Network::getResponse(NWResponse* response){
 
 }
 
-int Network::initialize(XXXXXConfig  config){
-    return XXXXXPort::initialize(config);
+int Network::initialize(Nrf24Config  config){
+    return Nrf24Port::initialize(config);
 }
 
 
 /*=========================================
-       Class XXXXXPort
+       Class Nrf24Port
  =========================================*/
 
-XXXXXPort::XXXXXPort(){
+Nrf24Port::Nrf24Port(){
 
 
 }
 
-XXXXXPort::~XXXXXPort(){
+Nrf24Port::~Nrf24Port(){
     close();
 }
 
-void XXXXXPort::close(){
+void Nrf24Port::close(){
 
 }
 
-int XXXXXPort::initialize(){
+int Nrf24Port::initialize(){
     return initialize(_config);
 }
 
-int XXXXXPort::initialize(XXXXXConfig config){
+int Nrf24Port::initialize(Nrf24Config config){
 
-    _config.param1 = config.param1;
-    _config.param2 = config.param2;
-    _config.param3 = config.param3;
-
-
+    _config.tbd = config.tbd;
+    return 0;
 }
 
 
-int XXXXXPort::unicast( ){
+int Nrf24Port::unicast( ){
 
 }
 
-int XXXXXPort::multicast(){
+int Nrf24Port::multicast(){
 
 }
 
-int XXXXXPort::recv(){
+int Nrf24Port::recv(){
 
 }
 
@@ -245,5 +242,5 @@ uint8_t NWResponse::getPayloadLength(){
     return _len;
 }
 
-#endif /* NETWORK_XXXXX */
+#endif /* NETWORK_NRF24 */
 

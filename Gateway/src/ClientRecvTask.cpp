@@ -125,6 +125,10 @@ void ClientRecvTask::run(){
 #ifdef NETWORK_XXXXX
 	_network = _res->getNetwork();
 #endif
+#ifdef NETWORK_NRF24
+    ///\todo add parameters here
+    _network = _res->getNetwork();
+#endif
 	if(_network->initialize(config) < 0){
 		THROW_EXCEPTION(ExFatal, ERRNO_APL_01, "can't open the client port.");  // ABORT
 	}
@@ -153,6 +157,11 @@ void ClientRecvTask::run(){
 					ClientNode* node = _res->getClientList()->createNode(secure, resp->getClientAddress64(),
 																	resp->getClientAddress16());
 				#endif
+
+                #ifdef NETWORK_NRF24
+                    ClientNode* node = _res->getClientList()->createNode(secure, resp->getClientAddress64(),
+                                                                                 resp->getClientAddress16());
+                #endif
 
 					if(!node){
 						delete ev;

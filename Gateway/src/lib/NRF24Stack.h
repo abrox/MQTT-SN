@@ -2,7 +2,7 @@
 #define NRF24STACK_H
 
 #include "Defines.h"
-#ifdef NETWORK_XXXXX
+#ifdef NETWORK_NRF24
 
 #include "ProcessFramework.h"
 #include <sys/time.h>
@@ -77,14 +77,14 @@ private:
 
 
 /*========================================
-       Class XXXXXPort
+       Class Nrf24Port
  =======================================*/
-class XXXXXPort{
+class Nrf24Port{
 public:
-    XXXXXPort();
-    virtual ~XXXXXPort();
+    Nrf24Port();
+    virtual ~Nrf24Port();
 protected:
-    int initialize(XXXXXConfig config);
+    int initialize(Nrf24Config config);
     int initialize();
 
     int unicast(  );
@@ -94,14 +94,14 @@ protected:
 private:
     void close();
 
-    XXXXXConfig _config;
+    Nrf24Config _config;
 
 };
 
 /*===========================================
                Class  Network
  ============================================*/
-class Network:public XXXXXPort{
+class Network:public Nrf24Port{
 public:
     Network();
     ~Network();
@@ -109,7 +109,7 @@ public:
     void unicast(NWAddress64* addr64, uint16_t addr16,	uint8_t* payload, uint16_t payloadLength);
     void broadcast(uint8_t* payload, uint16_t payloadLength);
     bool getResponse(NWResponse* response);
-    int  initialize(XXXXXConfig  config);
+    int  initialize(Nrf24Config  config);
 
 private:
 
@@ -118,13 +118,7 @@ private:
 
 }    /* end of namespace */
 
-#endif /* NETWORK_UDP */
-#endif  /* UDPSTACK_H_ */
+#endif /* NETWORK_NRF24 */
 
-class NRF24Stack
-{
-public:
-    NRF24Stack();
-};
 
 #endif // NRF24STACK_H

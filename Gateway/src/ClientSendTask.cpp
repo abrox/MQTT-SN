@@ -115,6 +115,9 @@ void ClientSendTask::run(){
 	_network = _res->getNetwork();
 #endif
 
+#ifdef NETWORK_NRF24
+    _network = _res->getNetwork();
+#endif
 
 	while(true){
 		Event* ev = _res->getClientSendQue()->wait();

@@ -38,7 +38,7 @@
  *    Network  Selection
  =================================*/
 
-#if ! defined(NETWORK_UDP) && ! defined (NETWORK_XXXXX)
+#if ! defined(NETWORK_UDP) && ! defined (NETWORK_XXXXX) && ! defined (NETWORK_NRF24)
 #define NETWORK_XBEE
 #define GATEWAY_NETWORK  "Network is XBee."
 #endif
@@ -49,6 +49,10 @@
 
 #ifdef NETWORK_XXXXX
 #define GATEWAY_NETWORK  "Network is XXXXX."
+#endif
+
+#ifdef NETWORK_NRF24
+#define GATEWAY_NETWORK  "Network is NRF24."
 #endif
 /*=================================
  *    CPU TYPE
@@ -96,6 +100,10 @@ typedef struct {
 	uint16_t param3;
 }XXXXXConfig;
 
+typedef struct {
+    uint8_t  tbd;
+}Nrf24Config;
+
 #ifdef NETWORK_XBEE
 #define NETWORK_CONFIG  XBeeConfig
 #endif
@@ -108,4 +116,7 @@ typedef struct {
 #define NETWORK_CONFIG XXXXXConfig
 #endif
 
+#ifdef NETWORK_NRF24
+#define NETWORK_CONFIG Nrf24Config
+#endif
 #endif  /*  DEFINES_H_  */

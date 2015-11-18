@@ -162,6 +162,7 @@
 #include "ZBStack.h"
 #include "UDPStack.h"
 #include "XXXXXStack.h"
+#include "NRF24Stack.h"
 #include "ProcessFramework.h"
 #include <string>
 
