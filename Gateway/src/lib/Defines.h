@@ -39,7 +39,10 @@
  =================================*/
 
 #if ! defined(NETWORK_UDP) && ! defined (NETWORK_XXXXX) && ! defined (NETWORK_NRF24)
-#define NETWORK_XBEE
+#error No network defined
+#endif
+
+#ifdef NETWORK_XBEE
 #define GATEWAY_NETWORK  "Network is XBee."
 #endif
 
@@ -63,7 +66,7 @@
 /*=================================
  *    Debug LOG
  ==================================*/
-//#define DEBUG_NWSTACK
+#define DEBUG_NWSTACK
 
 /*=================================
       Debug Print functions
@@ -119,4 +122,5 @@ typedef struct {
 #ifdef NETWORK_NRF24
 #define NETWORK_CONFIG Nrf24Config
 #endif
+
 #endif  /*  DEFINES_H_  */
