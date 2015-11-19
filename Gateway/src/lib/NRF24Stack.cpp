@@ -1,5 +1,5 @@
 /*
- * XXXXXStack.cpp
+ * Nrf24Stack.cpp
  *
  *                      The BSD License
  *
@@ -64,6 +64,7 @@ extern void setUint32(uint8_t* pos, uint32_t val);
        Class Network
  =========================================*/
 Network::Network(){
+DEBUG_NWSTACK("Network const");
 }
 
 Network::~Network(){
@@ -79,7 +80,7 @@ void Network::broadcast(uint8_t* payload, uint16_t payloadLength){
 }
 
 bool Network::getResponse(NWResponse* response){
-
+return false;
 }
 
 int Network::initialize(Nrf24Config  config){
@@ -91,9 +92,13 @@ int Network::initialize(Nrf24Config  config){
        Class Nrf24Port
  =========================================*/
 
-Nrf24Port::Nrf24Port(){
+Nrf24Port::Nrf24Port():
+_radio(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ), 
+_network(_radio),
+_mesh(_radio,_network)
+{
 
-
+DEBUG_NWSTACK("Constructor");
 }
 
 Nrf24Port::~Nrf24Port(){
@@ -105,6 +110,13 @@ void Nrf24Port::close(){
 }
 
 int Nrf24Port::initialize(){
+   // Set the nodeID to 0 for the master node
+   _mesh.setNodeID(0);
+   // Connect to the mesh
+   DEBUG_NWSTACK("start\n");
+   _mesh.begin();
+   _radio.printDetails();
+
     return initialize(_config);
 }
 
@@ -116,15 +128,30 @@ int Nrf24Port::initialize(Nrf24Config config){
 
 
 int Nrf24Port::unicast( ){
-
+return 0;
 }
 
 int Nrf24Port::multicast(){
-
+return 0;
 }
+#define MAXSIZE 66
+unsigned char buffer[MAXSIZE]={0};
 
 int Nrf24Port::recv(){
+// Call network.update as usual to keep the network updated
+  _mesh.update();
 
+  // In addition, keep the 'DHCP service' running on the master node so addresses will
+  // be assigned to the sensor nodes
+  _mesh.DHCP();
+RF24NetworkHeader header;
+int count = _network.read(header,buffer,MAXSIZE); 
+                DEBUG_NWSTACK("MQTT from 0%o data:",header.from_node);
+                for (int i = 0;i < count;i++)
+                   DEBUG_NWSTACK("%02X",buffer[i]);
+                DEBUG_NWSTACK("\n");
+
+  return 0;
 }
 
 

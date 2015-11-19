@@ -15,6 +15,10 @@
 #include <string>
 #include <arpa/inet.h>
 
+#include <RF24Mesh/RF24Mesh.h> 
+#include <RF24/RF24.h>
+#include <RF24Network/RF24Network.h>
+
 /*
  *   MQTTS  Client's state
  */
@@ -95,6 +99,9 @@ private:
     void close();
 
     Nrf24Config _config;
+    RF24        _radio;  
+    RF24Network _network;
+    RF24Mesh    _mesh;
 
 };
 
