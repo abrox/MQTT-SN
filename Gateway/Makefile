@@ -20,7 +20,7 @@ $(SUBDIR)/NRF24Stack.cpp \
 $(SUBDIR)/ZBStack.cpp 
 
 CXX := g++
-CPPFLAGS += 
+CPPFLAGS += -std=c++0x 
 DEFS :=
 LDFLAGS += 
 LIBS +=
