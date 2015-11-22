@@ -64,7 +64,8 @@ extern void setUint32(uint8_t* pos, uint32_t val);
        Class Network
  =========================================*/
 Network::Network(){
-DEBUG_NWSTACK("Network const");
+    _port = Nrf24Port::getInstance();
+
 }
 
 Network::~Network(){
@@ -72,33 +73,64 @@ Network::~Network(){
 }
 
 void Network::unicast(NWAddress64* addr64, uint16_t addr16, uint8_t* payload, uint16_t payloadLength){
-    Nrf24Port::unicast( );
+    
+     _port->unicast( addr16,payload,payloadLength);
 }
 
 void Network::broadcast(uint8_t* payload, uint16_t payloadLength){
-    Nrf24Port::multicast( );
+
+    _port->multicast( payload, payloadLength);
 }
 
 bool Network::getResponse(NWResponse* response){
+     uint8_t* buf = response->getPayloadPtr();
+     uint16_t nodeId;
+     uint16_t msgLen;
+     uint8_t  msgType;
+     int      recvLen;
+
+    recvLen = _port->recv(buf,MQTTSN_MAX_FRAME_SIZE,nodeId);
+    if(recvLen <= 0){
+        return false;
+    }else{
+        if(buf[0] == 0x01){
+            msgLen = getUint16(buf + 1);
+            msgType = *(buf + 3);
+        }else{
+            msgLen = (uint16_t)*(buf);
+            msgType = *(buf + 1);
+        }
+
+        if(msgLen != recvLen){
+           return false;
+        }
+
+        response->setLength(msgLen);
+	response->setMsgType(msgType);
+	response->setClientAddress16(nodeId);
+	//response->setClientAddress64(0, ipAddress);
+
+	return true;
+    }
 return false;
 }
 
 int Network::initialize(Nrf24Config  config){
-    return Nrf24Port::initialize(config);
+    return  _port->initialize(config);
 }
 
 
 /*=========================================
        Class Nrf24Port
  =========================================*/
-
+std::mutex  Nrf24Port::_m;
 Nrf24Port::Nrf24Port():
 _radio(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ), 
 _network(_radio),
-_mesh(_radio,_network)
+_mesh(_radio,_network),
+_inited(false)
 {
-
-DEBUG_NWSTACK("Constructor");
+;
 }
 
 Nrf24Port::~Nrf24Port(){
@@ -109,49 +141,109 @@ void Nrf24Port::close(){
 
 }
 
-int Nrf24Port::initialize(){
-   // Set the nodeID to 0 for the master node
-   _mesh.setNodeID(0);
-   // Connect to the mesh
-   DEBUG_NWSTACK("start\n");
-   _mesh.begin();
-   _radio.printDetails();
-
-    return initialize(_config);
-}
-
 int Nrf24Port::initialize(Nrf24Config config){
-
-    _config.tbd = config.tbd;
+   if (!_inited ){
+       std::lock_guard<std::mutex> lock(_m);
+       if( _inited)
+           return 0;
+       _inited = true;
+       // Set the nodeID to 0 for the master node
+       _mesh.setNodeID(0);
+       // Connect to the mesh
+       printf("start\n");
+       _mesh.begin();
+       _radio.printDetails();
+       _config.tbd = config.tbd;
+   }
     return 0;
 }
 
 
-int Nrf24Port::unicast( ){
+int Nrf24Port::unicast(  uint16_t addr16, uint8_t* payload, uint16_t payloadLength ){
+    bool    dataSent=false;
+
+    std::lock_guard<std::mutex> lock(_m);
+
+    _mesh.update();
+
+    int16_t meshAdr = _mesh.getAddress(addr16);
+    if (meshAdr< 0)
+       return -1;
+    //RF24NetworkHeader header(0,'Q');
+   
+    dataSent = _mesh.write(payload, 'Q', payloadLength, addr16); 
+
+//_network.multicast(header,payload,payloadLength,1);
+
+    printf("Unicast: MQTT to Node 0%o adr:%o data:",addr16,meshAdr);
+                for (int i = 0;i < payloadLength;i++)
+                   printf("%02X",payload[i]);
+               printf("\n");
+
+    return dataSent?payloadLength:0;
+}
+
+int Nrf24Port::multicast( uint8_t* payload, uint16_t payloadLength){
+    std::lock_guard<std::mutex> lock(_m);
+    RF24NetworkHeader header(0,'Q');
+    _mesh.update();
+  
+    //_mesh.write(payload, 'Q', payloadLength, 4);
+    _network.multicast(header,payload,payloadLength,1);
+
+    printf("Multicast: MQTT data:");
+                for (int i = 0;i < payloadLength;i++)
+                   printf("%02X",payload[i]);
+               printf("\n");
 return 0;
 }
 
-int Nrf24Port::multicast(){
-return 0;
-}
-#define MAXSIZE 66
-unsigned char buffer[MAXSIZE]={0};
+int Nrf24Port::recv( uint8_t * buf, const uint16_t maxLen, uint16_t &nodeId){
+    std::lock_guard<std::mutex> lock(_m);
+    ///\todo Maybe these should be some kind of network maintenace func.
+    // Call network.update as usual to keep the network updated
+    _mesh.update();
 
-int Nrf24Port::recv(){
-// Call network.update as usual to keep the network updated
-  _mesh.update();
+    // In addition, keep the 'DHCP service' running on the master node so addresses will
+    // be assigned to the sensor nodes
+    _mesh.DHCP();
+    RF24NetworkHeader header;
+    int count=0;
 
-  // In addition, keep the 'DHCP service' running on the master node so addresses will
-  // be assigned to the sensor nodes
-  _mesh.DHCP();
-RF24NetworkHeader header;
-int count = _network.read(header,buffer,MAXSIZE); 
-                DEBUG_NWSTACK("MQTT from 0%o data:",header.from_node);
+   if( !_network.available() )
+       return 0;
+
+    _network.peek(header);
+
+    switch(header.type){
+        case 'Q':
+        {
+        count = _network.read(header,buf,maxLen); 
+        if( count>0 ){
+            printf("MQTT from 0%o data:",header.from_node);
                 for (int i = 0;i < count;i++)
-                   DEBUG_NWSTACK("%02X",buffer[i]);
-                DEBUG_NWSTACK("\n");
+                   printf("%02X",buf[i]);
+               printf("\n");
 
-  return 0;
+            nodeId = _mesh.getNodeID(header.from_node);
+        }
+        }
+        break;
+        default:
+        count = _network.read(header,buf,maxLen); 
+        if( count>0 ){
+            printf("Unknown Msgtype %c from 0%o data:",header.type,header.from_node);
+                for (int i = 0;i < count;i++)
+                   printf("%02X",buf[i]);
+               printf("\n");
+        }
+        count = 0;//Dont push up as Mqtt msg.
+        break;
+    };//swtch
+
+    _mesh.update();
+
+    return count;
 }
 
 

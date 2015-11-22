@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <string>
 #include <arpa/inet.h>
+#include <mutex>
 
 #include <RF24Mesh/RF24Mesh.h> 
 #include <RF24/RF24.h>
@@ -62,7 +63,8 @@ public:
     uint8_t  getPayloadLength();
     uint16_t getClientAddress16();
     NWAddress64* getClientAddress64();
-protected:
+
+//protected:
     uint16_t getBodyLength();
     uint8_t* getBody();
     uint8_t  getPayload(uint8_t index);
@@ -87,13 +89,16 @@ class Nrf24Port{
 public:
     Nrf24Port();
     virtual ~Nrf24Port();
-protected:
-    int initialize(Nrf24Config config);
-    int initialize();
+    static Nrf24Port *getInstance(){
+          static Nrf24Port *inst =  new Nrf24Port();
+          return inst;
+    };
 
-    int unicast(  );
-    int multicast(  );
-    int recv( );
+    int initialize(Nrf24Config config);
+
+    int unicast(  uint16_t addr16, uint8_t* payload, uint16_t payloadLength);
+    int multicast( uint8_t* payload, uint16_t payloadLength );
+    int recv( uint8_t * buf, const uint16_t maxLen, uint16_t &nodeId);
 
 private:
     void close();
@@ -102,13 +107,14 @@ private:
     RF24        _radio;  
     RF24Network _network;
     RF24Mesh    _mesh;
-
+    static mutex _m;
+    bool   _inited;
 };
 
 /*===========================================
                Class  Network
  ============================================*/
-class Network:public Nrf24Port{
+class Network{
 public:
     Network();
     ~Network();
@@ -119,6 +125,7 @@ public:
     int  initialize(Nrf24Config  config);
 
 private:
+   Nrf24Port *_port;
 
 };
 
